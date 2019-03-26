@@ -9,16 +9,17 @@ cam = webcam;
   
 writePWMVoltage(a,'D9',0);
 background = snapshot(cam);
-%cam.ExposureMode='auto';
 cred = [];
 cgreen = [];
 i = 0;
+imgarr = [];
+url = "http://192.168.161.33:8080";
 tic;
 while(i<10)
-  c2 = [];
-  c3 = [];
-  imgc = [];
-  j = 1;
+%   c2 = [];
+%   c3 = [];
+   imgc = [];
+%  j = 1;
   pause(0.1);
   for index = 2:3:s
         if(code(index)=='1')
@@ -54,33 +55,35 @@ while(i<10)
                     disp("001");
                 else
                     writePWMVoltage(a,'D9',0);writePWMVoltage(a,'D10',0);
-           %         writePWMVoltage(a,'D10',0);
                     disp("000");
                 end
             end
         end
         
         pause(0.3);
-        img = snapshot(cam);
+        img = imread(url);
+%         img = snapshot(cam);
         
-        subplot(4,2,j);
-        j=j+1;
-        [yRed, x]=imhist(img(:,:,1));
-        [yGreen, x]=imhist(img(:,:,2));
-        [yBlue, x]=imhist(img(:,:,3));
-        %disp((yRed(length(yRed))))
-        plot(x, yRed, 'Red', x, yGreen, 'Green');
-        c2 = [c2 yRed(length(yRed))];
-        c3 = [c3 yGreen(length(yGreen))];
-        %imshow(rgb2gray(img));
-        %hist(reshape(img,[],3),1:max(img(:)));
-        %colormap([1 0 0;0 1 0;0 0 1]);
-        %imgc = [imgc snapshot(cam)];
+%         subplot(4,2,j);
+%         j=j+1;
+%         [yRed, x]=imhist(img(:,:,1));
+%         [yGreen, x]=imhist(img(:,:,2));
+%         [yBlue, x]=imhist(img(:,:,3));
+%         disp((yRed(length(yRed))))
+%         plot(x, yRed, 'Red', x, yGreen, 'Green', x, yBlue, 'Blue');
+%         xlim([5 250])
+%         c2 = [c2 yRed(length(yRed))];
+%         c3 = [c3 yGreen(length(yGreen))];
+%         imshow(rgb2gray(img));
+%         hist(reshape(img,[],3),1:max(img(:)));
+%         colormap([1 0 0;0 1 0;0 0 1]);
+         imgc = [imgc snapshot(cam)];
         pause(0.2);
    %     
   end
-  i = i+1
-  cred = [cred; c2];
-  cgreen = [cgreen; c3];
+  imgarr = [imgarr; imgc];
+%   i = i+1
+%   cred = [cred; c2];
+%   cgreen = [cgreen; c3];
 end
 toc;

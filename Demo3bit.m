@@ -5,15 +5,15 @@ a = arduino();
 code = "000001010011100101110111";
 s = strlength(code);
 code = split(code,"");
-cam = webcam;
+% cam = webcam;
   
 writePWMVoltage(a,'D9',0);
-background = snapshot(cam);
+% background = snapshot(cam);
 cred = [];
 cgreen = [];
 i = 0;
 imgarr = [];
-url = "http://192.168.161.33:80";
+url = "http://192.168.161.33:8080/shot.jpg";
 tic;
 while(i<10)
 %   c2 = [];
@@ -25,43 +25,44 @@ while(i<10)
         if(code(index)=='1')
             if(code(index+1)=='1')
                 if(code(index+2)=='1')
-                    writePWMVoltage(a,'D9',5);writePWMVoltage(a,'D10',5);
+                    writePWMVoltage(a,'D9',5);writePWMVoltage(a,'D10',5);writePWMVoltage(a,'D11',5);
                     disp("111");
                 else
-                    writePWMVoltage(a,'D9',1.5);writePWMVoltage(a,'D10',1.5);
+                    writePWMVoltage(a,'D9',5);writePWMVoltage(a,'D10',5);writePWMVoltage(a,'D11',0);
                     disp("110");
                 end
             else
                 if(code(index+2)=='1')
-                    writePWMVoltage(a,'D9',0.6);writePWMVoltage(a,'D10',0.6);
+                    writePWMVoltage(a,'D9',5);writePWMVoltage(a,'D10',0);writePWMVoltage(a,'D11',5);
                     disp("101");
                 else
-                    writePWMVoltage(a,'D9',0.35);writePWMVoltage(a,'D10',0.35);
+                    writePWMVoltage(a,'D9',5);writePWMVoltage(a,'D10',0);writePWMVoltage(a,'D11',0);
                     disp("100");
                 end
             end
         else
             if(code(index+1)=='1')
                 if(code(index+2)=='1')
-                    writePWMVoltage(a,'D9',0.2);writePWMVoltage(a,'D10',0.2);
+                    writePWMVoltage(a,'D9',0);writePWMVoltage(a,'D10',5);writePWMVoltage(a,'D11',5);
                     disp("011");
                 else
-                    writePWMVoltage(a,'D9',0.05);writePWMVoltage(a,'D10',0.05);
+                    writePWMVoltage(a,'D9',0);writePWMVoltage(a,'D10',5);writePWMVoltage(a,'D11',0);
                     disp("010");
                 end
             else
                 if(code(index+2)=='1')
-                    writePWMVoltage(a,'D9',0.02);writePWMVoltage(a,'D10',0.02);
+                    writePWMVoltage(a,'D9',0);writePWMVoltage(a,'D10',0);writePWMVoltage(a,'D11',5);
                     disp("001");
                 else
-                    writePWMVoltage(a,'D9',0);writePWMVoltage(a,'D10',0);
+                    writePWMVoltage(a,'D9',0);writePWMVoltage(a,'D10',0);writePWMVoltage(a,'D11',0);
                     disp("000");
                 end
             end
         end
         
         pause(0.3);
-        img = snapshot(cam);
+        img = imread(url);
+%         img = snapshot(cam);
         
 %         subplot(4,2,j);
 %         j=j+1;
@@ -76,12 +77,12 @@ while(i<10)
 %         imshow(rgb2gray(img));
 %         hist(reshape(img,[],3),1:max(img(:)));
 %         colormap([1 0 0;0 1 0;0 0 1]);
-         imgc = [imgc snapshot(cam)];
+       imgc = [imgc img];
         pause(0.2);
    %     
   end
   imgarr = [imgarr; imgc];
-%   i = i+1
+   i = i+1
 %   cred = [cred; c2];
 %   cgreen = [cgreen; c3];
 end
