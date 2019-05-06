@@ -16,7 +16,11 @@ from sklearn import tree
 import random
 
 ser = serial.Serial('/dev/ttyACM0')
-
+camera = PiCamera()
+camera.resolution = (640, 480)
+camera.shutter_speed = 2000
+camera.framerate = 60
+rawCapture = PiRGBArray(camera, size=(640, 480))
 
 #rawCapture = PiRGBArray(camera)
 
@@ -38,78 +42,76 @@ lower_green = np.array([44,50,50])
 upper_green = np.array([70,255,255])
 
 qwe = 'qwertyuiopasdfgh'
-
+iii = 0
+ser.write(qwe[0]) 
 ## Training Loop
-camera = PiCamera()
-camera.resolution = (640, 480)
-camera.shutter_speed = 2000
-camera.framerate = 60
-rawCapture = PiRGBArray(camera, size=(640, 480))
 time.sleep(2)
-#for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-for iii in range(16):
-    xx = "{0:b}".format(iii).zfill(4)
-    ser.write(qwe[iii])  
-    print(iii)
-    time.sleep(1)
-    camera.capture(rawCapture,format="bgr")
-    time.sleep(0.1)
-    #img = frame.array
-    img = rawCapture.array
-    #img = cv2.imread('c4/%s.jpg' %xx, flags=cv2.IMREAD_COLOR)
-    
-    Y.append(xx)
-    firstpart, secondpart = xx[:int(len(xx)/2)], xx[int(len(xx)/2):]
-    val1.append(firstpart)
-    val2.append(secondpart)
-    mask = []
-    #img = frame.array
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    maskR = cv2.inRange(hsv, lower_red, upper_red)
-    maskR2 = cv2.inRange(hsv, lower_red2, upper_red2)
-    #cv2.imshow("image4",img)
-    #cv2.waitKey(0)
-    mask.append(maskR+maskR2)
-    maskG = cv2.inRange(hsv,lower_green, upper_green)
-    mask.append(maskG)
-    
-    #maskB = cv2.inRange(hsv,lower_blue,upper_blue)
-    #maskY = cv2.inRange(hsv,lower_yellow,upper_yellow)
-    mask = np.array(mask)
-    
-    for colorx in range(2):
-        img1 = mask[colorx,:,:]
+for characters in 'qwertyuiopasdfgh':
+    ser.write(characters)
+    time.sleep(0.5)
+    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+        xx = "{0:b}".format(iii).zfill(4)
+        ser.write(qwe[iii])        
+        img = frame.array
+        #img = cv2.imread('c4/%s.jpg' %xx, flags=cv2.IMREAD_COLOR)
+        print(iii)
+        Y.append(xx)
+        firstpart, secondpart = xx[:int(len(xx)/2)], xx[int(len(xx)/2):]
+        val1.append(firstpart)
+        val2.append(secondpart)
+        mask = []
+        img = frame.array
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        maskR = cv2.inRange(hsv, lower_red, upper_red)
+        maskR2 = cv2.inRange(hsv, lower_red2, upper_red2)
+        #cv2.imshow("image4",img)
+        #cv2.waitKey(0)
+        mask.append(maskR+maskR2)
+        maskG = cv2.inRange(hsv,lower_green, upper_green)
+        mask.append(maskG)
+        
+        #maskB = cv2.inRange(hsv,lower_blue,upper_blue)
+        #maskY = cv2.inRange(hsv,lower_yellow,upper_yellow)
+        mask = np.array(mask)
+        
+        for colorx in range(2):
+            img1 = mask[colorx,:,:]
 
-        kernel = np.ones((5,5),np.uint8)
-        blurred=cv2.GaussianBlur(img1,(11,11),0)
-        threshold=cv2.threshold(blurred,200,255,cv2.THRESH_BINARY)[1]
-        #threshold=cv2.erode(threshold,np.ones((1,1),np.uint8),iterations=1)
-        threshold=cv2.dilate(threshold,np.ones((10,10),np.uint8),iterations=2)
-        #cv2.imshow("image4",threshold)
-        #cv2.waitKey(0)
-        try:
-            major = cv2.__version__.split('.')[0]
-            if major == '3':
-                _, con, _ = cv2.findContours(threshold.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            else:
-                con, _ = cv2.findContours(threshold.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            cons=contours.sort_contours(con)[0]
-            for(i,c) in enumerate(cons):
-                    (x,y,w,h)=cv2.boundingRect(c)
-                    #crop=masked_data[y:y+h,x:x+w]
-                    ((cx,cy),radius)=cv2.minEnclosingCircle(c)
-                    crop=cv2.circle(img,(int(cx),int(cy)),int(radius),(200,0,255),1)
-                    print(colorx,"  ",colorx,",",radius)
-                    if(colorx==0):
-                        r1.append("{0:.2f}".format(radius))
-                    else:
-                        r2.append("{0:.2f}".format(radius))
-                    break
-        except:
-                pass
-        #cv2.imshow("image1",img)
-        #cv2.waitKey(0)
-    rawCapture.truncate(0)
+            kernel = np.ones((5,5),np.uint8)
+            blurred=cv2.GaussianBlur(img1,(11,11),0)
+            threshold=cv2.threshold(blurred,200,255,cv2.THRESH_BINARY)[1]
+            #threshold=cv2.erode(threshold,np.ones((1,1),np.uint8),iterations=1)
+            threshold=cv2.dilate(threshold,np.ones((10,10),np.uint8),iterations=2)
+            #cv2.imshow("image4",threshold)
+            #cv2.waitKey(0)
+            try:
+                major = cv2.__version__.split('.')[0]
+                if major == '3':
+                    _, con, _ = cv2.findContours(threshold.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                else:
+                    con, _ = cv2.findContours(threshold.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                cons=contours.sort_contours(con)[0]
+                for(i,c) in enumerate(cons):
+                        (x,y,w,h)=cv2.boundingRect(c)
+                        #crop=masked_data[y:y+h,x:x+w]
+                        ((cx,cy),radius)=cv2.minEnclosingCircle(c)
+                        crop=cv2.circle(img,(int(cx),int(cy)),int(radius),(200,0,255),1)
+                        #print(colorx,"  ",colorx,",",radius)
+                        if(colorx==0):
+                            r1.append("{0:.2f}".format(radius))
+                        else:
+                            r2.append("{0:.2f}".format(radius))
+            except:
+                    pass
+        time.sleep(0.5)
+        break
+            #cv2.imshow("image1",img)
+            #cv2.waitKey(0)
+        #iii = iii+1
+                    
+        #else:
+            #break
+        rawCapture.truncate(0)
 
 			
     
@@ -140,19 +142,15 @@ iii = random.randint(0,15)
 ser.write(qwe[iii])
 time.sleep(0.5)
 ## Prediction Loop
-#for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-while(1):
+for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     time.sleep(0.5)
     r1 = []
     r2 = []
     Y1 = []
     iii = random.randint(0,15)
     ser.write(qwe[iii])
-    time.sleep(1)
-    camera.capture(rawCapture,format="bgr")
     time.sleep(0.1)
-    #img = frame.array
-    img = rawCapture.array
+    img = frame.array
     mask = []
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     maskR = cv2.inRange(hsv, lower_red, upper_red)
@@ -171,8 +169,8 @@ while(1):
         threshold=cv2.threshold(blurred,200,255,cv2.THRESH_BINARY)[1]
         #threshold=cv2.erode(threshold,np.ones((1,1),np.uint8),iterations=1)
         threshold=cv2.dilate(threshold,np.ones((10,10),np.uint8),iterations=2)
-        #cv2.imshow("image4",img)
-        #cv2.waitKey(0)
+        cv2.imshow("image4",threshold)
+        cv2.waitKey(0)
         try:
             major = cv2.__version__.split('.')[0]
             if major == '3':
@@ -190,7 +188,6 @@ while(1):
                         r1.append("{0:.2f}".format(radius))
                     else:
                         r2.append("{0:.2f}".format(radius))
-                    break
         except:
                 pass
     rawCapture.truncate(0)

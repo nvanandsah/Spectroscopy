@@ -14,8 +14,14 @@ rawCapture = PiRGBArray(camera, size=(640, 480))
 count = 0
 t = time.time()
 
-time.sleep(0.5)
-
+for i in 'qwertyuiopasdfgh':
+  ser.write(i)
+  print(i)
+  xx = "{0:b}".format(j).zfill(4)
+  j = j+1
+  time.sleep(0.5)
+  camera.capture('/home/pi/Desktop/Images4/%s.jpg' %xx)
+  time.sleep(0.5)
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 	img = frame.array
