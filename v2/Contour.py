@@ -15,12 +15,14 @@ r1 =[]
 r2=[]
 val1 = []
 val2 = []
+Y = []
 for iii in range(16):
     xx = "{0:b}".format(iii).zfill(4)
     #print(xx)
-    img = cv2.imread('3/%s.jpg' %xx, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread('c4/%s.jpg' %xx, flags=cv2.IMREAD_COLOR)
+    Y.append(xx)
     #img = cv2.imread("2/0000.jpg", flags=cv2.IMREAD_COLOR)
-    print()
+    #print()
     firstpart, secondpart = xx[:int(len(xx)/2)], xx[int(len(xx)/2):]
     val1.append(firstpart)
     val2.append(secondpart)
@@ -90,7 +92,7 @@ for iii in range(16):
                     #crop=masked_data[y:y+h,x:x+w]
                     ((cx,cy),radius)=cv2.minEnclosingCircle(c)
                     crop=cv2.circle(img,(int(cx),int(cy)),int(radius),(200,0,255),1)
-                    print(colorx,"  ",colorx,",",radius)
+                    #print(colorx,"  ",colorx,",",radius)
                     if(colorx==0):
                         r1.append("{0:.2f}".format(radius))
                     else:
@@ -102,8 +104,10 @@ for iii in range(16):
         #cv2.waitKey(0)
 print("time taken ", time.time()-start)
 #print(val)
-#print(r1)
-#print(r2)
+print("\n")
+print(r1)
+print(r2)
+print("\n")
 #r = [r1,r2]
 #result = [[r[j][i] for j in range(len(r))] for i in range(len(r[0]))]
 X1 = np.array(r1).reshape(-1,1)
@@ -127,7 +131,7 @@ Y1 = []
 for iii in range(16):
     xx = "{0:b}".format(iii).zfill(4)
     #print(xx)
-    img = cv2.imread('c3/%s.jpg' %xx, flags=cv2.IMREAD_COLOR)
+    img = cv2.imread('2/%s.jpg' %xx, flags=cv2.IMREAD_COLOR)
     #img = cv2.imread("2/0000.jpg", flags=cv2.IMREAD_COLOR)
     Y1.append(xx)
     lower_red = np.array([0,50,50]) 
@@ -207,12 +211,15 @@ for iii in range(16):
                 pass
 print("\n")
 print(r1)
-print("\n")
 print(r2)
+print("\n")
 r1 = np.array(r1).reshape(-1,1)
 r2 = np.array(r2).reshape(-1,1)
 y_pred1 = clf1.predict(r1)
 y_pred2 = clf2.predict(r2)
-print(y_pred1)
-print(y_pred2)
-#print("Accuracy:",accuracy_score(Y, y_pred))
+y_pred = [y_pred1[i]+y_pred2[i] for i in range(len(y_pred2))]
+#Y = [[Y1[i].join(Y2[i]) for i in range(len(Y1))]] 
+#print(y_pred1)
+#print(y_pred2)
+print(y_pred)
+print("Accuracy:",accuracy_score(Y1, y_pred))
