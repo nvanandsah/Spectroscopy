@@ -15,80 +15,80 @@ void loop() {
     
           if (inp == code[0])
           {
-            analogWrite(10, 10);
+            analogWrite(10, 60);
             analogWrite(11, 10);
           }
           else if (inp == code[1])
           {
-            analogWrite(10, 10);
+            analogWrite(10, 60);
             analogWrite(11, 20);
           }
           else if (inp == code[2])
           {
-           analogWrite(10, 10);
+           analogWrite(10, 60);
            analogWrite(11, 30);
           }
           else if (inp == code[3])
           {
-           analogWrite(10, 10);
+           analogWrite(10, 60);
            analogWrite(11, 50);
           }
-         else if (inp == code[4])
+           else if (inp == code[4])
           {
-          analogWrite(10, 50);
+          analogWrite(10, 120);
           analogWrite(11, 10);
-        }
-        else if (inp == code[5])
+          }
+          else if (inp == code[5])
           {
-            analogWrite(10, 50);
+            analogWrite(10, 120);
             analogWrite(11, 20);
           }
           else if (inp == code[6])
           {
-            analogWrite(10, 50);
+            analogWrite(10, 120);
             analogWrite(11, 30);
           }
           else if (inp == code[7])
           {
-           analogWrite(10, 50);
+           analogWrite(10, 120);
            analogWrite(11, 50);
           }
          else if (inp == code[8])
           {
-          analogWrite(10, 100);
+          analogWrite(10, 180);
           analogWrite(11, 10);
           }
           else if (inp == code[9])
           {
-          analogWrite(10, 100);
+          analogWrite(10, 180);
           analogWrite(11, 20);
           }
          else if (inp == code[10])
          {
-         analogWrite(10, 100);
+         analogWrite(10, 180);
          analogWrite(11, 30);
          }
          else if (inp == code[11])
-         {  analogWrite(10, 100);
+         {  analogWrite(10, 180);
             analogWrite(11, 50);
         }
          else if (inp == code[12])
         {
-         analogWrite(10, 70);
+         analogWrite(10, 240);
          analogWrite(11, 10);
           }
          else if (inp == code[13])
-         {   analogWrite(10, 150);
+         {   analogWrite(10, 240);
             analogWrite(11, 20);
           }
           else if (inp == code[14])
           {
-          analogWrite(10, 70);
+          analogWrite(10, 240);
             analogWrite(11, 30);
           }
           else if (inp == code[15])
           {
-          analogWrite(10, 70);
+          analogWrite(10, 240);
             analogWrite(11, 50);
           }
            uint32_t ts2 = millis();

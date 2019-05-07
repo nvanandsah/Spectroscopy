@@ -38,22 +38,24 @@ lower_green = np.array([44,50,50])
 upper_green = np.array([70,255,255])
 
 qwe = 'qwertyuiopasdfgh'
-
+ser.write(qwe[0])  
 ## Training Loop
 camera = PiCamera()
 camera.resolution = (640, 480)
 camera.shutter_speed = 2000
 camera.framerate = 60
+#camera.exposure_mode = 'off'
 rawCapture = PiRGBArray(camera, size=(640, 480))
 time.sleep(2)
 #for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 for iii in range(16):
     xx = "{0:b}".format(iii).zfill(4)
-    ser.write(qwe[iii])  
+    if(iii>0):
+        ser.write(qwe[iii])  
     print(iii)
-    time.sleep(1)
+    time.sleep(0.7)
     camera.capture(rawCapture,format="bgr")
-    time.sleep(0.1)
+    time.sleep(0.5)
     #img = frame.array
     img = rawCapture.array
     #img = cv2.imread('c4/%s.jpg' %xx, flags=cv2.IMREAD_COLOR)
@@ -85,7 +87,7 @@ for iii in range(16):
         threshold=cv2.threshold(blurred,200,255,cv2.THRESH_BINARY)[1]
         #threshold=cv2.erode(threshold,np.ones((1,1),np.uint8),iterations=1)
         threshold=cv2.dilate(threshold,np.ones((10,10),np.uint8),iterations=2)
-        #cv2.imshow("image4",threshold)
+        #cv2.imsh100ow("image4",threshold)
         #cv2.waitKey(0)
         try:
             major = cv2.__version__.split('.')[0]
@@ -107,6 +109,7 @@ for iii in range(16):
                     break
         except:
                 pass
+        time.sleep(0.1)
         #cv2.imshow("image1",img)
         #cv2.waitKey(0)
     rawCapture.truncate(0)
@@ -203,13 +206,16 @@ while(1):
     print("\n")
     r1 = np.array(r1).reshape(-1,1)
     r2 = np.array(r2).reshape(-1,1)
-    y_pred1 = clf1.predict(r1)
-    y_pred2 = clf2.predict(r2)
-    y_pred = [y_pred1[i]+y_pred2[i] for i in range(len(y_pred2))]
-    x = "{0:b}".format(iii).zfill(4)
-    print("For ",x," Output detected ",y_pred)
-    #print("Accuracy:",accuracy_score(Y1, y_pred))
-
+    try:        
+        y_pred1 = clf1.predict(r1)
+        y_pred2 = clf2.predict(r2)
+        y_pred = [y_pred1[i]+y_pred2[i] for i in range(len(y_pred2))]
+        x = "{0:b}".format(iii).zfill(4)
+        print("For ",x," Output detected ",y_pred)
+        #print("Accuracy:",accuracy_score(Y1, y_pred))
+    except:
+        cv2.imshow("image4",img)
+        cv2.waitKey(0)
     rawCapture.truncate(0)
     if key == ord("q"):
 	    break
